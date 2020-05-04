@@ -1,4 +1,4 @@
-# ML_Explorer
+# ML Explorer
 
 ## Intro
 
@@ -32,13 +32,12 @@ up at once.
 
 As this project is still in active development, there are likely to be bugs. If you find one, please open an issue.
 
-Thank you!
-John
+A special thank you to [Professor Jason Kuruzovich](https://lallyschool.rpi.edu/faculty/jason-nicholas-kuruzovich) of Rensselaer Polytechnic Institute who advised this project!
 
 ## Installation
 
 ## Screenshots
 
-
+![Alt text](/images/path/to/img.jpg?raw=true "Optional Title")
 
 
