@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+
+  DB1:
+    image:
+      mongo
+    ports:
+      - "27017:27017"
+    container_name:
+      "DB1"
+
+  web_server:
+    command: /usr/src/app/entrypoint.sh
+    build:
+      context: ./node_server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./node_server:/usr/src/app
+    container_name:
+      "web_server"
+    depends_on:
+      - DB1
+    environment:
+      PORT: 5000
+      EMAIL_HOST: "${EMAIL_HOST}"
+      EMAIL_USERNAME: "${EMAIL_USERNAME}"
+      EMAIL_PASSWORD: "${EMAIL_PASSWORD}"
+      API_TOKEN_SECRET: "${API_TOKEN_SECRET}"
+      WEB_TOKEN_SECRET: "${WEB_TOKEN_SECRET}"
+      INVITE_TOKEN_SECRET: "${INVITE_TOKEN_SECRET}"
+      VALIDATE_TOKEN_SECRET: "${VALIDATE_TOKEN_SECRET}"
+
+  dashboard:
+    command: /usr/src/app/entrypoint.sh
+    build:
+      context: ./dashboard
+    ports:
+      - "7000:7000"
+    container_name:
+      "dashboard"
+    depends_on:
+        - web_server
+    volumes:
+      - ./dashboard:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      PORT: 7000
+      HOST: 0.0.0.0

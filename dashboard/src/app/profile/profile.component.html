@@ -1,0 +1,45 @@
+<div class="row">
+    <table class="table table-green">
+      <thead>
+        <th colspan="2">Hyperparameters</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            API Key
+          </td>
+          <td>
+            <p>{{profile.api_key}}</p>
+          </td>
+        </tr>
+        <tr>
+            <td>
+              Name
+            </td>
+            <td>
+              <p>{{profile.first_name}} {{profile.last_name}}</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Email
+            </td>
+            <td>
+              <p>{{profile.email}}</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Active Projects
+            </td>
+            <td>
+              <ul *ngFor="let project of projects">
+                <li>{{project.name}}</li>
+              </ul>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+
+

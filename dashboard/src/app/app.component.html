@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#b3e0ff;">
+  <a class="navbar-brand" href="#">ML Dashboard</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/profile" routerLinkActive="active">Profile</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+        <a class="nav-link" *ngIf="!auth.loggedIn()" routerLink="/login" routerLinkActive="active">Login</a>
+        <a class="nav-link" *ngIf="!auth.loggedIn()" routerLink="/register" routerLinkActive="active">Register</a>
+        <a class="nav-link" style="cursor:pointer" *ngIf="auth.loggedIn()" (click)="auth.logoutUser()">Logout</a>        
+    </ul>
+  </div>
+</nav>    
+<div class="container" style="padding-top:20px">
+  <app-messages></app-messages>
+  <router-outlet></router-outlet>            
+</div>

@@ -1,0 +1,41 @@
+<div class="container" style="padding-top:'20px'">
+    <div class="row">
+        <div class="col-sm-12">
+            <h5>Create New Project</h5>
+            <form>
+                <div class="form-group">
+                    <input class="form-control" type="text" [(ngModel)]="projectData.name" name="name" placeholder="Project Name">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" [(ngModel)]="projectData.description" name="description" placeholder="Description">
+                </div>
+                <input class="btn btn-primary" type="button" (click)="createProject()" value="Create">
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h5>Explore Existing Projects</h5>
+            <table class="table table-green">
+                <thead>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Members</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor = "let project of projects" routerLink="/projects/{{project.name}}">
+                        <td>
+                            {{project.name}}
+                        </td>
+                        <td>
+                            {{project.description}}
+                        </td>
+                        <td>
+                            {{project.members}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
