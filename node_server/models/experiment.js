@@ -63,12 +63,12 @@ ExperimentSchema.methods.toJSON = function() {
 
     // //Create new fields for the very last 
     // // metrics in each experiment
-    // const epochs = experiment.loss.length
-    // experimentObject.final_train_loss = (epochs > 0) ? experiment.loss[epochs-1] : 0.0
-    // experimentObject.final_val_loss = (epochs > 0) ? experiment.val_loss[epochs-1] : 0.0
-    // experimentObject.final_train_accuracy = (epochs > 0) ? experiment.accuracy[epochs-1] : 0.0
-    // experimentObject.final_val_accuracy = (epochs > 0) ? experiment.val_accuracy[epochs-1] : 0.0
-    // experimentObject.epochs = epochs
+    const epochs = experiment.loss.length
+    experimentObject.final_train_loss = (epochs > 0) ? experiment.loss[epochs-1] : 0.0
+    experimentObject.final_val_loss = (epochs > 0) ? experiment.val_loss[epochs-1] : 0.0
+    experimentObject.final_train_accuracy = (epochs > 0) ? experiment.accuracy[epochs-1] : 0.0
+    experimentObject.final_val_accuracy = (epochs > 0) ? experiment.val_accuracy[epochs-1] : 0.0
+    experimentObject.epochs = epochs
 
     // delete experimentObject._id
     // delete experimentObject.project_id
