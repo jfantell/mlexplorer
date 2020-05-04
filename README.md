@@ -39,5 +39,6 @@ A special thank you to [Professor Jason Kuruzovich](https://lallyschool.rpi.edu/
 ## Screenshots
 
 ![Alt text](/images/simple_registration.png?raw=true "Simple Registration")
-
-
+![Alt text](/images/project.png?raw=true "Projects Page")
+![Alt text](/images/invite.png?raw=true "Invite User")
+![Alt text](/images/experiment.png?raw=true "Experiment")
