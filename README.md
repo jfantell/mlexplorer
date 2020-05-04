@@ -34,7 +34,17 @@ As this project is still in active development, there are likely to be bugs. If 
 
 A special thank you to [Professor Jason Kuruzovich](https://lallyschool.rpi.edu/faculty/jason-nicholas-kuruzovich) of Rensselaer Polytechnic Institute who advised this project!
 
-## Installation
+## Dashboard/API Server Installation
+
+In a terminal:
+
+1. Clone this repository to a directory of your choice and `cd` into the repository
+2. Run: `docker-compose build`
+3. Run: `docker-compose up` #this will start the API Server, MongoDB, and Dashboard
+
+## API Documentation:
+
+Coming Soon!
 
 ## Screenshots
 
