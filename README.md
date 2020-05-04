@@ -38,6 +38,6 @@ A special thank you to [Professor Jason Kuruzovich](https://lallyschool.rpi.edu/
 
 ## Screenshots
 
-![Alt text](/images/path/to/img.jpg?raw=true "Optional Title")
+![Alt text](/images/simple_registration.png?raw=true "Simple Registration")
 
 
