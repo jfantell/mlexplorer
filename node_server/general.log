@@ -157,3 +157,5 @@
 {"service":"ml_explorer","level":"error","message":"Error 3005: 'Unable to get specific experiment'","timestamp":"2020-05-04 11:14:16"}
 {"message":"Start logging!","level":"info","service":"ml_explorer","timestamp":"2020-05-04 13:06:51"}
 {"service":"ml_explorer","level":"info","message":"Server listening on port 5000","timestamp":"2020-05-04 13:06:52"}
+{"message":"Start logging!","level":"info","service":"ml_explorer","timestamp":"2020-05-06 23:24:51"}
+{"service":"ml_explorer","level":"info","message":"Server listening on port 5000","timestamp":"2020-05-06 23:24:52"}
