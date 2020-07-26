@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/dashboard'])
       },
       err => {
-        this.messageService.add("Unable to authenticate!","ALERT")
+        this.messageService.add(err['error'],"ALERT")
         console.log(err)
       }
     ) 

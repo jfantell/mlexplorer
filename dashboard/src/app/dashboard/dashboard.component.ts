@@ -27,18 +27,19 @@ export class DashboardComponent implements OnInit {
         this.getProjects()
       },
       err => {
-        this.messageService.add(`Unable to create model`,"ALERT")
+        this.messageService.add(err['error'],"ALERT")
       }
     ) 
   }
 
   getProjects(){
     this.projectsService.getProjects().subscribe(
-      models => {
-        this.projects = models
+      projects => {
+        this.projects = projects
+        console.log(projects)
       },
       err => {
-        this.messageService.add(`Unable to fetch models...please try again later!`,"ALERT")
+        this.messageService.add(err['error'],"ALERT")
       }
     )
   }

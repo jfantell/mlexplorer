@@ -42,6 +42,7 @@ export class ProjectComponent implements OnInit {
   getProject(){
     this.projectService.getProject(this.project_name).subscribe(
       project => {
+        console.log(project[0].member_id)
         this.project = project[0];
         this.admin = project[1].isAdmin;
       },

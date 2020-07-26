@@ -20,7 +20,6 @@
                 <thead>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>Members</th>
                 </thead>
                 <tbody>
                     <tr *ngFor = "let project of projects" routerLink="/projects/{{project.name}}">
@@ -29,9 +28,6 @@
                         </td>
                         <td>
                             {{project.description}}
-                        </td>
-                        <td>
-                            {{project.members}}
                         </td>
                     </tr>
                 </tbody>
