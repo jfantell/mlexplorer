@@ -13,11 +13,11 @@ const CoreExperiment = require('../core/experiment')
 // return experiment_id
 router.post('/experiments/api', api_auth, async (req, res) => {
     try{
-        experiment = await CoreExperiment.create_new_experiment(req.user._id,req.body.project_name,)
+        experiment = await CoreExperiment.create_new_experiment(req.user._id,req.body.project_name)
         res.status(201).send(experiment)
     } catch (e) {
         logger.error("Error 3000: %o", e)
-        res.status(404).send(`Error: Error creating experiment`)
+        res.status(404).send(`Error: Unable to create experiment`)
     }
 })
 
@@ -27,11 +27,11 @@ router.get('/experiments/project/:project_name', web_auth, async (req, res) => {
         project = await Project.findOne({member_id: req.user._id, name: req.params.project_name})
         Experiment.find({project_id: project._id}).populate('parent','-_id experiment_id').populate('children','-_id experiment_id').exec(function (err, experiments) {
             if(experiments) res.send(experiments)
-            else res.status(404).send(`Error: ${e}`)
+            else res.status(404).send(`Error: Unable to retrieve experiments for given project`)
         })
     } catch (e) {
         logger.error("Error 3001: %o", e)
-        res.status(404).send(`Error: ${e}`)
+        res.status(404).send(`Error: Unable to retrieve experiments for given project`)
     }
 })
 

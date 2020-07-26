@@ -17,11 +17,11 @@ router.post('/users/register', async (req, res) => {
         res.status(201).send("An account has been created. Please verify your account via email.")
     } catch (e) {
         logger.error("Error 1000: %o", e)
-        if(e instanceof ValidationError){
-            e = e['message']
-        }
-        else if(!e instanceof UserError){
+        if(e == undefined) {
             e = "Sorry, an error occured! Please try again later!"
+        }
+        else {
+            e = e.message
         }
         res.status(400).send(e)
     }
@@ -33,9 +33,7 @@ router.get('/users/activate', async (req, res) => {
         await CoreUser.activate(req.query)
         res.send("This user account has been activated")
     } catch (e) {
-        //Need to send logs to user
-        // logger.error("Error 1008: %o", e)
-        console.log(typeof e)
+        logger.error("Error 999: %o", e)
         res.status(404).send(`Error: Unable to activate user account`)
     }
 })
@@ -46,17 +44,21 @@ router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         if(!user.active){
-            throw "User account not active"
+            throw new UserError("User account not active; check your email for an activation message")
         }
         const token = await user.generateAuthToken()
+
+        //get current datetime
+        var d = new Date();
+        logger.info(`User: ${user.email} logged in`)
         res.send({ user, token })
     } catch (e) {
-        logger.error("Error 1000: %o", e)
-        if(e instanceof ValidationError){
-            e = e['message']
-        }
-        else if(!e instanceof UserError){
+        logger.error("Error 1001: %o", e)
+        if(e == undefined) {
             e = "Sorry, an error occured! Please try again later!"
+        }
+        else {
+            e = e.message
         }
         res.status(400).send(e)
     }
@@ -70,6 +72,9 @@ router.post('/users/logout', auth, async (req, res) => {
             return token.token !== req.token
         })
         await req.user.save()
+         //get current datetime
+         var d = new Date();
+         logger.info(`User: ${req.user.email} logged out`)
         res.send()
     } catch (e) {
         logger.error("Error 1002: %o", e)
@@ -83,6 +88,9 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
+        //get current datetime
+        var d = new Date();
+        logger.info(`User: ${req.user.email} logged out of all devices`)
         res.send()
     } catch (e) {
         logger.error("Error 1003: %o", e)

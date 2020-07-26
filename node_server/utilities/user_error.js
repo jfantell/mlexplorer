@@ -1,9 +1,12 @@
 
 //Source: https://stackoverflow.com/questions/464359/custom-exception-type
 //Custom exceptions
-function UserError(message) {
-    this.message = message;
+class UserError extends Error {
+    constructor(message) {
+      super(message); // (1)
+      this.name = "UserError"; // (2)
+    }
 }
-  
-UserError.prototype = new Error;
-module.exports = UserError;
+
+module.exports = UserError
+

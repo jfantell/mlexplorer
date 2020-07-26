@@ -9,7 +9,7 @@ const auth = async (req, res, next) => {
         const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
 
         if (!user) {
-            throw new Error()
+            throw new Error("Unable to find user")
         }
 
         req.token = token
@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
         next()
     } catch (e) {
         logger.error("Error 5001: Auth Error %o", e)
-        res.status(401).send({ error: 'Please authenticate.' })
+        res.status(401).send(e.message)
     }
 }
 

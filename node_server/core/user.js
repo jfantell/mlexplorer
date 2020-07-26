@@ -5,15 +5,16 @@
  * 1. first_name, last_name, email, password, confirm_password - Creating user accont from website
  * 2. - Cr
  */
-User = require('../models/user')
-logger = require('../logging/logging')
+var User = require('../models/user')
+const logger = require('../logging/logging')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
 const UserError = require('../utilities/user_error')
+const transporter = require('../mail/mail')
 
 module.exports = {
 
-    async create_new_user(userObj,query){
+    async create_new_user(body,query){
         //If a query exists, lets check if it has an invite token
         //which contains the email of the user invited to a certain
         //project
@@ -21,51 +22,57 @@ module.exports = {
             //Try to decode
             try {
                 const decoded = jwt.verify(query.token, process.env.INVITE_TOKEN_SECRET)
-                userObj['email'] = decoded.email
+                body['email'] = decoded.email
             } catch (error) {
                 logger.info("Unable to decode token %o", error)
             }
         }
-
-        //Ensure userObj has all required attributes
+        
+        //Ensure body has all required attributes
         //for creating a new user
         required_attributes = ['first_name', 'last_name', 'email', 'password', 'confirm_password']
         required_attributes.forEach((attribute) => {
-            if(userObj[attribute] == '') {
+            if(body[attribute] == '') {
                 throw new UserError("Missing required account details")
             } 
         })
 
         //Ensure passwords match
-        if(userObj.password != userObj.confirm_password){
-            throw UserError("Passwords do not match")
+        if(body.password != body.confirm_password){
+            throw new UserError("Passwords do not match")
         }
 
         //Determine if user already exists in db
-        user = await User.findOne({email : userObj.email})
-        if(user){ //if user found, check if account is pending (this means a placeholder account was created via an invite but not setup)
-            if(user.pending){
-                user.first_name = userObj.first_name
-                user.last_name = userObj.last_name
-                user.password = userObj.password
-                user.pending = false
+        user = await User.findOne({email : body.email})
+        if(user){ //if user found, check if account is a placeholder account created by an email invite
+            if(user.invite_placeholder_account){
+                user.first_name = body.first_name
+                user.last_name = body.last_name
+                user.password = body.password
+                user.invite_placeholder_account = false
             }
             else{ //an account already exists for this user
-                throw UserError("Unable to create user account. User with this email already exists.")
+                throw Error("Unable to create user account. User with this email already exists.")
             }
-        }else{
+        } else{
              user = new User({
-                first_name : userObj.first_name,
-                last_name : userObj.last_name,
-                email: userObj.email,
-                password: userObj.password,
+                first_name : body.first_name,
+                last_name : body.last_name,
+                email: body.email,
+                password: body.password,
             })
         }
+
+        // adds user to database
         await user.save()
+        //generates an API key for the user
         await user.generateAPIKey()
+        //sends a validation email to the user
         await user.sendValidation()
     },
 
+    // Activate a user account using the token embedded in the url
+    // that was sent to the user in an email
     async activate(query){
         const token = query.token
         const decoded = jwt.verify(token, process.env.VALIDATE_TOKEN_SECRET)

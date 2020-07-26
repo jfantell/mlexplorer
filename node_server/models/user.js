@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    pending : {
+    invite_placeholder_account : {
         type: Boolean,
         default: false
     },

@@ -121,13 +121,13 @@ router.patch('/projects/member/add/:name', auth, async (req, res) => {
         if (!member) {
             member = new User({
                 email: member_email,
-                pending: true
+                invite_placeholder_account: true
             })
             await member.save({ validateBeforeSave: false }) 
         }
 
         //Ping them, to sign up
-        if(member.pending){
+        if(member.invite_placeholder_account){
             await member.inviteUserByEmail()
         }
 
