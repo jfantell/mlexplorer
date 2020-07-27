@@ -1,0 +1,13 @@
+Metadata-Version: 1.2
+Name: mlexplorer
+Version: 0.0.1
+Summary: A Python API to interface with the open source ML Explorer platform
+Home-page: https://github.com/jfantell/mlexplorer
+Author: John Fantell
+Author-email: admin@dolphindatallc.com
+License: UNKNOWN
+Project-URL: Issue Tracker, https://github.com/jfantell/mlexplorer/issues
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.4
