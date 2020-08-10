@@ -37,6 +37,11 @@ ProjectSchema.methods.toJSON = function () {
     const project = this
     const projectObject = project.toObject()
 
+    if(process.env.PROD_MODE == 'True'){
+        delete projectObject.__v
+        delete projectObject._id
+    }
+
     return projectObject
 }
 

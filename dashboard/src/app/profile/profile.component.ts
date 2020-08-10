@@ -38,7 +38,7 @@ export class ProfileComponent implements OnInit {
       },
       err => {
         console.log(err)
-        this.messagesService.add("Unable to retrieve profile","ALERT");
+        this.messagesService.add("Unable to retrieve projects","ALERT");
       }
     )
   }

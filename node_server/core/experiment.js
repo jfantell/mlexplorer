@@ -15,7 +15,7 @@ module.exports = {
         var counter = await Counter.findByIdAndUpdate({_id: project_id }, {$inc: { seq: 1} }, {new: true, upsert: true});
 
         if(!project_id){
-            throw Error("Unable to find project for the provided project name")
+            throw Error("Unable to find project with the provided project name")
         }
         const experiment = new Experiment({
             project_id: project_id,
@@ -61,7 +61,7 @@ module.exports = {
     },
 
 
-    async clone_and_update_experiment(start_epoch, user_id, project_name, experiment_id){
+    async clone_experiment(start_epoch, user_id, project_name, experiment_id){
         const project = await Project.findOne({member_id: user_id, name: project_name})
         
         if (!project) {

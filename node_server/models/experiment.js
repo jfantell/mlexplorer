@@ -61,6 +61,12 @@ ExperimentSchema.methods.toJSON = function() {
     const experiment = this
     const experimentObject = experiment.toObject()
 
+    if(process.env.PROD_MODE == 'True'){
+        delete experimentObject._id
+        delete experimentObject.project_id
+        delete experimentObject.__v
+    }
+    
     // //Create new fields for the very last 
     // // metrics in each experiment
     const epochs = experiment.loss.length
@@ -70,19 +76,8 @@ ExperimentSchema.methods.toJSON = function() {
     experimentObject.final_val_accuracy = (epochs > 0) ? experiment.val_accuracy[epochs-1] : 0.0
     experimentObject.epochs = epochs
 
-    // delete experimentObject._id
-    // delete experimentObject.project_id
     return experimentObject
 }
-
-// // Generate experiment id
-// ExperimentSchema.pre('save', async function (next) {
-//     const experiment = this;
-//     var counter = await Counter.findByIdAndUpdate({_id: experiment.project_id }, {$inc: { seq: 1} }, {new: true, upsert: true});
-//     console.log(counter)
-//     experiment.experiment_id = counter.seq;
-//     next()
-// })
 
 ExperimentSchema.index({ project_id: 1, experiment_id: 1}, { unique: true })
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProjectService } from '../project.service';
 import { MessagesService } from '../messages.service';
+import { ConsoleReporter } from 'jasmine';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,7 +28,8 @@ export class DashboardComponent implements OnInit {
         this.getProjects()
       },
       err => {
-        this.messageService.add(err['error'],"ALERT")
+        console.log(err)
+        this.messageService.add(err['error']['msg'],"ALERT")
       }
     ) 
   }
@@ -39,7 +41,7 @@ export class DashboardComponent implements OnInit {
         console.log(projects)
       },
       err => {
-        this.messageService.add(err['error'],"ALERT")
+        this.messageService.add(err['error']['msg'],"ALERT")
       }
     )
   }

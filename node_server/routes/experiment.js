@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 const router = new express.Router()
 const logger = require('../logging/logging')
 const CoreExperiment = require('../core/experiment')
+const UserError = require('../utilities/user_error')
 
 // Create new experiment
 // return experiment_id
@@ -17,7 +18,7 @@ router.post('/experiments/api', api_auth, async (req, res) => {
         res.status(201).send(experiment)
     } catch (e) {
         logger.error("Error 3000: %o", e)
-        res.status(404).send(`Error: Unable to create experiment`)
+        res.status(404).send({status:"Unable to create experiment"})
     }
 })
 
@@ -27,11 +28,12 @@ router.get('/experiments/project/:project_name', web_auth, async (req, res) => {
         project = await Project.findOne({member_id: req.user._id, name: req.params.project_name})
         Experiment.find({project_id: project._id}).populate('parent','-_id experiment_id').populate('children','-_id experiment_id').exec(function (err, experiments) {
             if(experiments) res.send(experiments)
-            else res.status(404).send(`Error: Unable to retrieve experiments for given project`)
+            else throw new UserError("Unable to retrieve experiments for given project")
         })
     } catch (e) {
         logger.error("Error 3001: %o", e)
-        res.status(404).send(`Error: Unable to retrieve experiments for given project`)
+        res.status(404).send({msg: e.message})
+
     }
 })
 
@@ -42,13 +44,13 @@ router.get('/experiments/project/:project_name/id/:experiment_id', web_auth, asy
         project = await Project.findOne({member_id: req.user._id, name: req.params.project_name})
         
         if (!project) {
-            return res.status(404).send("Unable to get specific project")
+            throw new UserError("Unable to get specific project")
         }
         
         experiment = await Experiment.findOne({project_id: project._id, experiment_id: req.params.experiment_id})
 
         if (!experiment) {
-            return res.status(404).send("Unable to get specific experiment")
+            throw new UserError("Unable to get specific experiment")
         }
 
         //Populate experiments
@@ -56,7 +58,8 @@ router.get('/experiments/project/:project_name/id/:experiment_id', web_auth, asy
         res.send(experiment)
     } catch (e) {
         logger.error("Error 3002: %o", e)
-        res.status(500).send(`Error: ${e}`)
+        res.status(404).send({msg: e.message})
+
     }
 })
 
@@ -67,13 +70,13 @@ router.patch('/experiments/project/:project_name/id/:experiment_id/meta', api_au
         project = await Project.findOne({member_id: req.user._id, name: req.params.project_name})
         
         if (!project) {
-            return res.status(404).send("Unable to get specific project")
+            throw new UserError("Unable to get specific project")
         }
         
         experiment = await Experiment.findOne({project_id: project._id, experiment_id: req.params.experiment_id})
 
         if (!experiment) {
-            return res.status(404).send("Unable to update experiment")
+            throw new UserError("Unable to update experiment")
         }
 
         updates.forEach((update) => experiment.metadata[update] = req.body[update])
@@ -82,7 +85,8 @@ router.patch('/experiments/project/:project_name/id/:experiment_id/meta', api_au
         res.send(experiment)
     } catch (e) {
         logger.error("Error 3003: %o", e)
-        res.status(500).send(`Error: ${e}`)
+        res.status(404).send({msg: e.message})
+
     }
 })
 
@@ -93,13 +97,13 @@ router.patch('/experiments/project/:project_name/id/:experiment_id/hyper', api_a
         project = await Project.findOne({member_id: req.user._id, name: req.params.project_name})
         
         if (!project) {
-            return res.status(404).send("Unable to get specific project")
+            throw new UserError("Unable to get specific project")
         }
         
         experiment = await Experiment.findOne({project_id: project._id, experiment_id: req.params.experiment_id})
 
         if (!experiment) {
-            return res.status(404).send("Unable to update experiment")
+            throw new UserError("Unable to update experiment")
         }
 
         updates.forEach((update) => experiment.hyperparameters[update] = req.body[update])
@@ -108,7 +112,8 @@ router.patch('/experiments/project/:project_name/id/:experiment_id/hyper', api_a
         res.send(experiment)
     } catch (e) {
         logger.error("Error 3004: %o", e)
-        res.status(500).send(`Error: ${e}`)
+        res.status(404).send({msg: e.message})
+
     }
 })
 
@@ -120,7 +125,7 @@ router.patch('/experiments/project/:project_name/id/:experiment_id/epoch', api_a
         res.send(experiment)
     } catch (e) {
         logger.error("Error 3005: %o", e)
-        res.status(500).send(`Error: ${e}`)
+        res.status(404).send({msg: e.message})
     }
 })
 
@@ -130,13 +135,13 @@ router.patch('/experiments/project/:project_name/id/:experiment_id/eval', api_au
         project = await Project.findOne({member_id: req.user._id, name: req.params.project_name})
         
         if (!project) {
-            return res.status(404).send("Unable to get specific project")
+            throw new UserError("Unable to get specific project")
         }
         
         experiment = await Experiment.findOne({project_id: project._id, experiment_id: req.params.experiment_id})
 
         if (!experiment) {
-            return res.status(404).send("Unable to update experiment")
+            throw new UserError("Unable to update experiment")
         }
 
         experiment.test_loss = req.body.test_loss
@@ -146,7 +151,7 @@ router.patch('/experiments/project/:project_name/id/:experiment_id/eval', api_au
         res.send(experiment)
     } catch (e) {
         logger.error("Error 3006: %o", e)
-        res.status(500).send(`Error: ${e}`)
+        res.status(404).send({msg: e.message})
     }
 })
 
@@ -156,19 +161,19 @@ router.delete('/experiments/project/:project_name/id/:experiment_id', web_auth, 
         project = await Project.findOne({member_id: req.user._id, name: req.params.project_name})
         
         if (!project) {
-            return res.status(404).send("Unable to get specific project")
+            throw new UserError("Unable to get specific project")
         }
         
         experiment = await Experiment.findOneAndDelete({project_id: project._id, experiment_id: req.params.experiment_id})
 
         if (!experiment) {
-            return res.status(404).send("Unable to delete experiment")
+            throw new UserError("Unable to delete experiment")
         }
         
         res.send(experiment)
     } catch (e) {
         logger.error("Error 3007: %o", e)
-        res.status(500).send(`Error: ${e}`)
+        res.status(404).send({msg: e.message})
     }
 })
 
@@ -183,13 +188,13 @@ router.post('/experiments/clone', api_auth, async (req, res) => {
         const project = await Project.findOne({member_id: req.user._id, name: project_name})
         
         if (!project) {
-            return res.status(404).send("Unable to get specific project")
+            throw new UserError("Unable to get specific project")
         }
         
         const experiment = await Experiment.findOne({project_id: project._id, experiment_id: experiment_id})
 
         if (!experiment) {
-            return res.status(404).send("Unable to get specific experiment")
+            throw new UserError("Unable to get specific experiment")
         }
 
         //Create new experiment (exact copy of old experiment)
@@ -228,7 +233,7 @@ router.post('/experiments/clone', api_auth, async (req, res) => {
         res.send(new_experiment)
     } catch (e) {
         console.log(e)
-        res.status(500).send(`Error: ${e}`)
+        res.status(404).send({msg: e.message})
     }
 })
 

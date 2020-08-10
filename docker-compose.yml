@@ -1,3 +1,4 @@
+ 
 version: "3"
 
 services:
@@ -31,9 +32,9 @@ services:
       WEB_TOKEN_SECRET: "${WEB_TOKEN_SECRET}"
       INVITE_TOKEN_SECRET: "${INVITE_TOKEN_SECRET}"
       VALIDATE_TOKEN_SECRET: "${VALIDATE_TOKEN_SECRET}"
+      PROD_MODE: "${PROD_MODE}"
 
   dashboard:
-    command: /usr/src/app/entrypoint.sh
     build:
       context: ./dashboard
     ports:
@@ -43,8 +44,8 @@ services:
     depends_on:
         - web_server
     volumes:
-      - ./dashboard:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./dashboard:/app
+      - /app/node_modules
     environment:
       PORT: 7000
       HOST: 0.0.0.0

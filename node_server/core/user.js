@@ -15,18 +15,19 @@ const transporter = require('../mail/mail')
 module.exports = {
 
     async create_new_user(body,query){
+        // EMAIL FUNCTIONALITY DISABLED
         //If a query exists, lets check if it has an invite token
         //which contains the email of the user invited to a certain
         //project
-        if(query.token){
-            //Try to decode
-            try {
-                const decoded = jwt.verify(query.token, process.env.INVITE_TOKEN_SECRET)
-                body['email'] = decoded.email
-            } catch (error) {
-                logger.info("Unable to decode token %o", error)
-            }
-        }
+        // if(query.token){
+        //     //Try to decode
+        //     try {
+        //         const decoded = jwt.verify(query.token, process.env.INVITE_TOKEN_SECRET)
+        //         body['email'] = decoded.email
+        //     } catch (error) {
+        //         logger.info("Unable to decode token %o", error)
+        //     }
+        // }
         
         //Ensure body has all required attributes
         //for creating a new user
@@ -67,18 +68,21 @@ module.exports = {
         await user.save()
         //generates an API key for the user
         await user.generateAPIKey()
-        //sends a validation email to the user
-        await user.sendValidation()
+
+        // EMAIL FUNCTIONALITY DISABLED
+        // //sends a validation email to the user
+        // await user.sendValidation()
     },
 
+    // EMAIL FUNCTIONALITY DISABLED
     // Activate a user account using the token embedded in the url
     // that was sent to the user in an email
-    async activate(query){
-        const token = query.token
-        const decoded = jwt.verify(token, process.env.VALIDATE_TOKEN_SECRET)
-        const user_id = decoded._id
-        const user = await User.findOne({_id: user_id})
-        user.active = true
-        await user.save()
-    }
+    // async activate(query){
+    //     const token = query.token
+    //     const decoded = jwt.verify(token, process.env.VALIDATE_TOKEN_SECRET)
+    //     const user_id = decoded._id
+    //     const user = await User.findOne({_id: user_id})
+    //     user.active = true
+    //     await user.save()
+    // }
 };

@@ -43,7 +43,7 @@ const UserSchema = new mongoose.Schema({
     },
     active:{
         type: Boolean,
-        default: false
+        default: true
     },
     invite_placeholder_account : {
         type: Boolean,
@@ -72,10 +72,14 @@ UserSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
 
-    // delete userObject.password
-    // delete userObject.tokens
-    // delete userObject.__v
-    // delete userObject._id
+    if(process.env.PROD_MODE == 'True'){
+        delete userObject.password
+        delete userObject.tokens
+        delete userObject.__v
+        delete userObject._id
+        delete userObject.active
+        delete userObject.invite_placeholder_account
+    }
 
     return userObject
 }
@@ -101,42 +105,45 @@ UserSchema.methods.generateAPIKey = async function () {
     return api_key
 }
 
+
+//E-MAIL FUNCTIONALITY DISABLED
 //Send validation email
-UserSchema.methods.sendValidation = async function() {
-    user = this
-    const token = jwt.sign({ _id: user._id.toString()}, process.env.VALIDATE_TOKEN_SECRET,{ expiresIn: '1 day' })
+// UserSchema.methods.sendValidation = async function() {
+//     user = this
+//     const token = jwt.sign({ _id: user._id.toString()}, process.env.VALIDATE_TOKEN_SECRET,{ expiresIn: '1 day' })
 
-    url = `http://127.0.0.1:7000/api/users/activate?token=${token}`
+//     url = `http://127.0.0.1:7000/api/users/activate?token=${token}`
     
-    transporter.sendMail({
-        from: '"Dolphin Data LLC" <admin@dolphindatallc.com>', // sender address
-        to: `${user.email}`, // list of receivers
-        subject: "Activate Your ML Explorer Account", // Subject line
-        html: `
-        ML Explorer is a collaborative open-source meta machine learning tool.
-        To activate your ML Explorer account click on the following link: <a href="${url}">Activate Account!</a>` // html body)
-    })
-}
+//     transporter.sendMail({
+//         from: '"Dolphin Data LLC" <admin@dolphindatallc.com>', // sender address
+//         to: `${user.email}`, // list of receivers
+//         subject: "Activate Your ML Explorer Account", // Subject line
+//         html: `
+//         ML Explorer is a collaborative open-source meta machine learning tool.
+//         To activate your ML Explorer account click on the following link: <a href="${url}">Activate Account!</a>` // html body)
+//     })
+// }
 
+//E-MAIL FUNCTIONALITY DISABLED
 //Invite a user to ML Explorer
-UserSchema.methods.inviteUserByEmail = async function(){
-    user = this
-    const token = jwt.sign({ email : user.email }, process.env.INVITE_TOKEN_SECRET, { expiresIn: '1 day' })
+// UserSchema.methods.inviteUserByEmail = async function(){
+//     user = this
+//     const token = jwt.sign({ email : user.email }, process.env.INVITE_TOKEN_SECRET, { expiresIn: '1 day' })
 
-    url = `http://127.0.0.1:7000/register?token=${token}`
+//     url = `http://127.0.0.1:7000/register?token=${token}`
 
-    transporter.sendMail({
-        from: '"Dolphin Data LLC" <admin@dolphindatallc.com>', // sender address
-        to: `${user.email}`, // list of receivers
-        subject: "You were added to a project on ML Explorer!", // Subject line
-        html: `
-        ML Explorer is a collaborative open-source meta machine learning tool. In order to join
-        the project (to which you have been invited) you must create an account.
+//     transporter.sendMail({
+//         from: '"Dolphin Data LLC" <admin@dolphindatallc.com>', // sender address
+//         to: `${user.email}`, // list of receivers
+//         subject: "You were added to a project on ML Explorer!", // Subject line
+//         html: `
+//         ML Explorer is a collaborative open-source meta machine learning tool. In order to join
+//         the project (to which you have been invited) you must create an account.
 
-        Please open the following link to complete your account sign up : <a href="${url}">Sign Up!</a>
-        ` // html body)
-    })
-}
+//         Please open the following link to complete your account sign up : <a href="${url}">Sign Up!</a>
+//         ` // html body)
+//     })
+// }
 
 //Attempt to authenticate
 UserSchema.statics.findByCredentials = async (email, password) => {

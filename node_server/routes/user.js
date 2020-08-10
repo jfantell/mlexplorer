@@ -3,40 +3,41 @@ const User = require('../models/user')
 const auth = require('../middleware/web_auth')
 const router = new express.Router()
 const logger = require('../logging/logging')
-const jwt = require('jsonwebtoken')
 const CoreUser = require('../core/user')
-var mongoose = require('mongoose')
 const UserError = require('../utilities/user_error')
-var ValidationError = mongoose.Error.ValidationError; //needed to catch mongoose errors
 
 //Create a new user via main registration portal
 //Generates a token and api key
 router.post('/users/register', async (req, res) => {
     try {
         await CoreUser.create_new_user(req.body,req.query)
-        res.status(201).send("An account has been created. Please verify your account via email.")
+        res.status(201).send({msg: "An account has been created. Please login."})
     } catch (e) {
         logger.error("Error 1000: %o", e)
         if(e == undefined) {
             e = "Sorry, an error occured! Please try again later!"
         }
+        else if (e.message == 'User validation failed: email: Path `email` is required.' || e.message == 'User validation failed: email: This email address is invalid'){
+            e = "Please enter a valid email."
+        }
         else {
             e = e.message
         }
-        res.status(400).send(e)
+        res.status(400).send({msg: e})
     }
 })
 
+//E-MAIL FUNCTIONALITY DISABLED
 //Activate user account
-router.get('/users/activate', async (req, res) => {
-    try {
-        await CoreUser.activate(req.query)
-        res.send("This user account has been activated")
-    } catch (e) {
-        logger.error("Error 999: %o", e)
-        res.status(404).send(`Error: Unable to activate user account`)
-    }
-})
+// router.get('/users/activate', async (req, res) => {
+//     try {
+//         await CoreUser.activate(req.query)
+//         res.send("This user account has been activated")
+//     } catch (e) {
+//         logger.error("Error 999: %o", e)
+//         res.status(404).send(`Error: Unable to activate user account`)
+//     }
+// })
 
 // Log a user in
 // Generates a token
@@ -44,7 +45,7 @@ router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         if(!user.active){
-            throw new UserError("User account not active; check your email for an activation message")
+            throw new UserError("User account not active")
         }
         const token = await user.generateAuthToken()
 
@@ -60,7 +61,7 @@ router.post('/users/login', async (req, res) => {
         else {
             e = e.message
         }
-        res.status(400).send(e)
+        res.status(400).send({msg: e})
     }
 })
 
@@ -75,10 +76,10 @@ router.post('/users/logout', auth, async (req, res) => {
          //get current datetime
          var d = new Date();
          logger.info(`User: ${req.user.email} logged out`)
-        res.send()
+        res.send({status: "User logged out"})
     } catch (e) {
         logger.error("Error 1002: %o", e)
-        res.status(404).send(`Error: Unable to log out user`)
+        res.status(404).send({msg: "Unable to log out user."})
     }
 })
 
@@ -91,10 +92,10 @@ router.post('/users/logoutAll', auth, async (req, res) => {
         //get current datetime
         var d = new Date();
         logger.info(`User: ${req.user.email} logged out of all devices`)
-        res.send()
+        res.send({msg: "User logged out on all devices"})
     } catch (e) {
         logger.error("Error 1003: %o", e)
-        res.status(404).send(`Error: Unable to log out user on all devices`)
+        res.status(404).send({msg: "Unable to log out user on all devices"})
     }
 })
 
@@ -103,8 +104,8 @@ router.get('/users/me', auth, async (req, res) => {
     try {
         res.send(req.user)
     } catch (e) {
-        logger.error("Error 1004: %o", e)
-        res.status(500).send(`Error: Server Error`)
+        logger.error({msg:"Error 1004: %o", e})
+        res.status(500).send({msg: "Server Error"})
     }
 })
 
@@ -114,18 +115,18 @@ router.patch('/users/me', auth, async (req, res) => {
     const allowedUpdates = ['first_name', 'last_name', 'email', 'password']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
-    if (!isValidOperation) {
-        logger.error("Error 1005: Invalid update to user profile")
-        return res.status(404).send({ error: 'Invalid update to user profile' })
-    }
-
     try {
+        if (!isValidOperation) {
+            logger.error("Error 1005: Invalid update to user profile")
+            throw new UserError('Invalid update to user profile')
+        }
+
         updates.forEach((update) => req.user[update] = req.body[update])
         await req.user.save()
-        res.send(req.user)
+        res.send({msg: 'User info successfully updated'})
     } catch (e) {
         logger.error("Error 1006: %o", e)
-        res.status(404).send(`Error: Unable to update user`)
+        res.status(404).send({msg: e.message})
     }
 })
 
@@ -133,10 +134,10 @@ router.patch('/users/me', auth, async (req, res) => {
 router.delete('/users/me', auth, async (req, res) => {
     try {
         await req.user.remove()
-        res.send(req.user)
+        res.send({msg: 'User successfully deleted'})
     } catch (e) {
         logger.error("Error 1007: %o", e)
-        res.status(404).send(`Error: Unable to delete user`)
+        res.status(404).send({msg: "Unable to delete user"})
     }
 })
 

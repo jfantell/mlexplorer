@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
         next()
     } catch (e) {
         logger.error("Error 5001: Auth Error %o", e)
-        res.status(401).send(e.message)
+        res.status(401).send({status: e.message})
     }
 }
 

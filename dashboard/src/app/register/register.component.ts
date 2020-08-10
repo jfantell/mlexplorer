@@ -40,11 +40,11 @@ export class RegisterComponent implements OnInit {
     this.auth.registerUser(this.registerUserData,this.token)
     .subscribe(
       res => {
-        this.messageService.add(res,"SUCCESS")
+        this.messageService.add(res["msg"],"SUCCESS")
         this.clearData()
       },
       err => {
-        this.messageService.add(err['error'],"ALERT")
+        this.messageService.add(err['error']['msg'],"ALERT")
       }
     )      
   }

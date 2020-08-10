@@ -16,7 +16,7 @@ export class AuthService {
       if(token){
         url += `?token=${token}`
       }
-      return this.http.post(url, user, {responseType: 'text'} )
+      return this.http.post<any>(url, user)
     }
 
     loginUser(user) {
