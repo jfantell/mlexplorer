@@ -18,7 +18,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.5",
     "mongoose": "^5.9.7",
-    "mquery": "^3.2.2",
+    "mquery": "^3.2.3",
     "nodemailer": "^6.4.6",
     "nodemon": "^2.0.2",
     "socket.io": "^1.7.4",
