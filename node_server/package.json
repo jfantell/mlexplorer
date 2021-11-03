@@ -22,7 +22,7 @@
     "nodemailer": "^6.4.6",
     "nodemon": "^2.0.2",
     "socket.io": "^1.7.4",
-    "validator": "^13.0.0",
+    "validator": "^13.7.0",
     "winston": "^3.2.1"
   }
 }
